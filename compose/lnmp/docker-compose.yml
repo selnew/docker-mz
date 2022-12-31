@@ -32,13 +32,15 @@ services:
             - mariadb
             # - redis
             - php
+        environment:
+            - TZ=Asia/Shanghai
         restart: always
         networks:
             - lnmp-net
     php:
         container_name: php
         # image: php:7.4-fpm
-        image: mirze/php:latest
+        image: mirze/php:7.4.02
         ports:
             - 8001:9000
         volumes:
@@ -49,14 +51,14 @@ services:
         restart: always
         networks:
             - lnmp-net
-    redis:
-        container_name: redis
-        image: redis:7-alpine
-        ports:
-            - 6380:6379
-        volumes:
-            - ./redis/db:/var/lib/redis
-            - ./redis/logs:/data/log/redis
-        restart: always
-        networks:
-            - lnmp-net
+    # redis:
+    #     container_name: redis
+    #     image: redis:7-alpine
+    #     ports:
+    #         - 6380:6379
+    #     volumes:
+    #         - ./redis/db:/var/lib/redis
+    #         - ./redis/logs:/data/log/redis
+    #     restart: always
+    #     networks:
+    #         - lnmp-net

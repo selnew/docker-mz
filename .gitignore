@@ -1,0 +1,14 @@
+/.idea
+/.vscode
+/.DS_Store
+
+*.log
+# .env
+composer.lock
+
+Test.php
+
+/vendor
+/runtime/*
+/public/storage/*
+
