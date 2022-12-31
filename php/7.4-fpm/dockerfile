@@ -1,0 +1,74 @@
+FROM php:7.4-fpm
+
+# 镜像信息
+LABEL Author="Mirze"
+LABEL Version="1.0"
+LABEL Description="PHP-FPM 7.4 Image Ext: redis memcached mongodb swoole ."
+
+ENV TZ=Asia/Shanghai
+ENV DEPENDENCIES curl gnupg git wget gcc g++
+
+ENV PHP_DEPENDENCIES \
+    # ext: gd 
+    libfreetype6-dev libjpeg62-turbo-dev libpng-dev \
+    # libwebp-dev libxpm-dev libjpeg-dev \
+    libmcrypt-dev \
+    # ext: memcached
+    libmemcached-dev zlib1g-dev \
+    # ext: rabbitmq
+    # librabbitmq-dev \
+    # ssh支持
+    # libssh-dev \
+    # ext: bz2
+    bzip2 libbz2-dev zlib1g-dev libzip-dev
+
+ENV PHP_EXT_INSTALLED \
+    mcrypt \
+    xdebug-3.1.6 \
+    redis 5.3.7 memcached-3.2.0 mongodb-1.15.0 swoole-4.8.12
+    # redis memcached mongodb swoole xdebug
+
+# Use the default production configuration
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+# PHP Core Extensions
+# ext: gd
+# RUN apt-get update && apt-get install -y \
+# 		libfreetype6-dev \
+# 		libjpeg62-turbo-dev \
+# 		libpng-dev \
+# 	&& docker-php-ext-configure gd --with-freetype --with-jpeg \
+# 	&& docker-php-ext-install -j$(nproc) gd
+
+# RUN apt-get update && \
+#   pecl install -o -f $PHP_EXT_INSTALLED && \
+#   # docker-php-ext-install 
+#   docker-php-ext-enable swoole redis
+
+# RUN pecl install redis \
+# 	&& pecl install xdebug-2.8.1 \
+# 	&& docker-php-ext-enable redis xdebug
+
+
+RUN apt-get update && \
+    apt-get install -y $PHP_DEPENDENCIES $DEPENDENCIES && \
+    # apt-get install -y $PHP_DEPENDENCIES && \
+	  pecl install -o -f $PHP_EXT_INSTALLED && \
+    # PHP7.2可用
+    # docker-php-ext-configure gd --with-gd --with-webp-dir --with-freetype-dir --with-jpeg-dir \
+    # PHP7.4变更
+    docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg && \
+    docker-php-ext-install opcache bcmath bz2 gd iconv mysqli pdo pdo_mysql zip sockets && \
+    docker-php-ext-enable opcache mcrypt \
+      xdebug \
+      redis memcached mongodb swoole
+
+# composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+  && apt-get -y remove $DEPENDENCIES \
+  && apt-get purge -y --auto-remove \
+  && rm -rf /var/lib/apt/lists/* \
+  && rm -rf /tmp/pear ~/.pearrc
