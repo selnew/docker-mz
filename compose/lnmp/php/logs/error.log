@@ -1,0 +1,8 @@
+[31-Dec-2022 06:36:42 UTC] PHP Fatal error:  Uncaught RedisException: ERR AUTH <password> called without any password configured for the default user. Are you sure your configuration is correct? in /data/www/redis.php:5
+Stack trace:
+#0 /data/www/redis.php(5): Redis->auth('123456')
+#1 {main}
+  thrown in /data/www/redis.php on line 5
+[31-Dec-2022 06:41:08 UTC] PHP Warning:  Swoole\Event::rshutdown(): Using Xdebug in coroutines is extremely dangerous, please notice that it may lead to coredump! in Unknown on line 0
+[31-Dec-2022 06:41:08 UTC] PHP Stack trace:
+[31-Dec-2022 06:41:09 UTC] PHP   1. Swoole\Event::rshutdown() Unknown:0
