@@ -2,8 +2,10 @@ FROM php:7.4-fpm
 
 # 镜像信息
 LABEL Author="Mirze"
-LABEL Version="1.0"
-LABEL Description="PHP-FPM 7.4 Image Ext: redis memcached mongodb swoole ."
+# LABEL Version="7.4.01"
+LABEL Version="7.4.02"
+# LABEL Description="PHP-FPM 7.4 Image Ext: redis memcached mongodb swoole ."
+LABEL Description="PHP-FPM 7.4 Image Core: gd Ext: redis mongodb mcrypt ."
 
 ENV TZ=Asia/Shanghai
 ENV DEPENDENCIES curl gnupg git wget gcc g++
@@ -25,8 +27,11 @@ ENV PHP_DEPENDENCIES \
 ENV PHP_EXT_INSTALLED \
     mcrypt \
     xdebug-3.1.6 \
-    redis 5.3.7 memcached-3.2.0 mongodb-1.15.0 swoole-4.8.12
     # redis memcached mongodb swoole xdebug
+    # v7.4.01
+    # redis 5.3.7 memcached-3.2.0 mongodb-1.15.0 swoole-4.8.12
+    # v7.4.02
+    redis 5.3.7 mongodb-1.15.0
 
 # Use the default production configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
@@ -60,8 +65,11 @@ RUN apt-get update && \
     docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg && \
     docker-php-ext-install opcache bcmath bz2 gd iconv mysqli pdo pdo_mysql zip sockets && \
     docker-php-ext-enable opcache mcrypt \
-      xdebug \
-      redis memcached mongodb swoole
+        xdebug \
+        # v7.4.01
+        # redis memcached mongodb swoole
+        # v7.4.02
+        redis mongodb
 
 # composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
